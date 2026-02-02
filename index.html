@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For my favorite person 💖</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            height: 100vh;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Georgia', serif; /* A more romantic, elegant font */
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 40px 25px;
+            border-radius: 30px;
+            box-shadow: 0 10px 30px rgba(255, 105, 180, 0.3);
+            text-align: center;
+            width: 90%;
+            max-width: 420px;
+            min-height: 480px;
+            position: relative;
+            z-index: 10;
+            border: 2px solid #fff;
+        }
+
+        h1 {
+            color: #d63384;
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        /* The boundary for the runaway button */
+        .btn-area {
+            position: relative;
+            height: 250px;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        /* YES button - Big and inviting */
+        #yesBtn {
+            padding: 15px 35px;
+            font-size: 18px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            background: #ff4d6d;
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+            position: absolute;
+            left: 50%;
+            top: 20px;
+            transform: translateX(-50%);
+            z-index: 100; /* Always stays on top */
+            transition: transform 0.3s ease;
+        }
+
+        /* NO button - Smaller and "fleeing" */
+        #noBtn {
+            padding: 8px 18px; /* Slimmer, not bulky */
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 50px;
+            background: #f8f9fa;
+            color: #888;
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 10;
+            cursor: default;
+        }
+
+        /* Adorable Result Screen */
+        #result {
+            display: none;
+            animation: fadeIn 1s ease-in;
+        }
+
+        #result h2 {
+            color: #ff4d6d;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        #result p {
+            color: #777;
+            font-style: italic;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        #result img {
+            width: 180px;
+            border-radius: 50%;
+            margin-top: 25px;
+            border: 5px solid #fff;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Floating Hearts */
+        .heart {
+            position: fixed;
+            font-size: 20px;
+            top: -10%;
+            z-index: 1;
+            pointer-events: none;
+            animation: floatUp 4s linear forwards;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="card">
+    <div id="main-content">
+        <h1 id="typing"></h1>
+        <div class="btn-area" id="btnArea">
+            <button id="yesBtn">Yes, I'd love to! 💖</button>
+            <button id="noBtn">No thanks</button>
+        </div>
+    </div>
+
+    <div id="result">
+        <h2>My heart is yours, <span style="color:#ff4d6d">COCO</span>... 💕</h2>
+        <p>
+            You just made my entire world a whole lot brighter.<br>
+            I promise to always cherish you and keep that beautiful smile on your face.<br>
+            <strong>Always & Forever. 🌸</strong>
+        </p>
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHIybTVjOWY0ZHF4bmR4Z2p4bmR4Z2p4bmR4Z2p4bmR4Z2p4bSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0MYt5jPR6QX5pnqM/giphy.gif" alt="Happy">
+    </div>
+</div>
+
+<audio id="music" loop>
+    <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">
+</audio>
+
+<script>
+    const text = "Hey COCO 💕\nI was wondering...\nWill you be my Valentine?";
+    const typingEl = document.getElementById("typing");
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const btnArea = document.getElementById("btnArea");
+    const result = document.getElementById("result");
+    const mainContent = document.getElementById("main-content");
+    const music = document.getElementById("music");
+    let i = 0;
+
+    // Typing Effect
+    function typeText() {
+        if (i < text.length) {
+            typingEl.innerHTML += text[i] === "\n" ? "<br>" : text[i];
+            i++;
+            setTimeout(typeText, 60);
+        }
+    }
+    typeText();
+
+    // The Run-Away Logic (Restricted to within the Box)
+    function moveButton() {
+        const areaWidth = btnArea.clientWidth;
+        const areaHeight = btnArea.clientHeight;
+        const btnWidth = noBtn.offsetWidth;
+        const btnHeight = noBtn.offsetHeight;
+
+        // Ensure the button stays strictly inside the btn-area boundaries
+        const padding = 10;
+        const newX = Math.random() * (areaWidth - btnWidth - (padding * 2)) + padding;
+        const newY = Math.random() * (areaHeight - btnHeight - (padding * 2)) + padding;
+
+        noBtn.style.left = newX + "px";
+        noBtn.style.top = newY + "px";
+        noBtn.style.bottom = "auto";
+        noBtn.style.transform = "none";
+    }
+
+    // Trigger on hover and tap
+    noBtn.addEventListener("mouseover", moveButton);
+    noBtn.addEventListener("touchstart", (e) => {
+        e.preventDefault(); 
+        moveButton();
+    });
+
+    // Yes Button - The Pure and Romantic Finish
+    yesBtn.addEventListener("click", () => {
+        mainContent.style.display = "none";
+        result.style.display = "block";
+        music.play();
+        startHearts();
+    });
+
+    // Infinite Romantic Heart Rain
+    function startHearts() {
+        setInterval(() => {
+            const heart = document.createElement("div");
+            const emojis = ["💖", "🌸", "✨", "💕", "🌷"];
+            heart.classList.add("heart");
+            heart.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+            heart.style.left = Math.random() * 100 + "vw";
+            heart.style.animationDuration = (Math.random() * 2 + 3) + "s";
+            document.body.appendChild(heart);
+
+            setTimeout(() => heart.remove(), 5000);
+        }, 200);
+    }
+</script>
+
+</body>
+</html>
